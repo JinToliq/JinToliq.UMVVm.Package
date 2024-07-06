@@ -1,0 +1,17 @@
+{
+    "name": "jintoliq.umvvm.view",
+    "rootNamespace": "JinToliq.Umvvm.View",
+    "references": [
+        "GUID:ca58a48db60b90c4a8940d01cd407126",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

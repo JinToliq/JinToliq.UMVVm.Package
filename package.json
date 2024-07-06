@@ -1,0 +1,27 @@
+{
+  "name": "com.jintoliq.umvvm",
+  "version": "1.0.0",
+  "displayName": "UMVVm",
+  "description": "Fastly organize UI in a Model-View-ViewModel pattern using simple and robust data bindings to contexts and UI manager to open UI Windows or Popups",
+  "unity": "2023.2",
+  "unityRelease": "3f1",
+  "documentationUrl": "https://github.com/JinToliq/JinToliq.UMVVm.Package/blob/main/Documentation/SimpleTween.md",
+  "changelogUrl": "https://github.com/JinToliq/JinToliq.UMVVm.Package/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/JinToliq/JinToliq.UMVVm.Package/blob/main/LICENSE.md",
+  "keywords": [
+    "mvvm",
+    "view",
+    "viewmodel",
+    "view-model",
+    "ui",
+    "binding",
+    "bindings",
+    "context",
+    "contexts"
+  ],
+  "author": {
+    "name": "JinToliq",
+    "email": "a.homeliev@gmail.com",
+    "url": "https://github.com/JinToliq/JinToliq.UMVVm.Package.git"
+  }
+}
