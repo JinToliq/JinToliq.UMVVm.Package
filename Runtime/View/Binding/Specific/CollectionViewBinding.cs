@@ -32,7 +32,7 @@ namespace JinToliq.Umvvm.View.Binding.Specific
       if (value is not IList collection || collection.Count == 0)
       {
         foreach (var instance in _instances)
-          UiPool.Instance.Recycle(instance);
+          OnScenePool.Instance.Recycle(instance);
 
         _instances.Clear();
         return;
@@ -47,7 +47,7 @@ namespace JinToliq.Umvvm.View.Binding.Specific
         {
           var instance = _instances[i];
 
-          UiPool.Instance.Recycle(instance);
+          OnScenePool.Instance.Recycle(instance);
           _instances.RemoveAt(i);
         }
       }
@@ -55,7 +55,7 @@ namespace JinToliq.Umvvm.View.Binding.Specific
       {
         for (var i = oldCount; i < newCount; i++)
         {
-          var instance = UiPool.Instance.Get<DataView>(_prefab, _parent);
+          var instance = OnScenePool.Instance.Get<DataView>(_prefab, _parent);
           instance.gameObject.SetActive(true);
           _instances.Add(instance);
         }

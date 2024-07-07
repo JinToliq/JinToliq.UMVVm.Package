@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace JinToliq.Umvvm.View
 {
-  public class UiPool : MonoBehaviour
+  public class OnScenePool : MonoBehaviour
   {
     private class Bucket
     {
@@ -20,13 +20,13 @@ namespace JinToliq.Umvvm.View
       }
     }
 
-    public static UiPool Instance => LazyInstance.Value;
-    private static readonly Lazy<UiPool> LazyInstance = new(Factory);
+    public static OnScenePool Instance => LazyInstance.Value;
+    private static readonly Lazy<OnScenePool> LazyInstance = new(Factory);
     private readonly Dictionary<string, Bucket> _registry = new();
 
-    private static UiPool Factory()
+    private static OnScenePool Factory()
     {
-      var result = new GameObject("UiPool").AddComponent<UiPool>();
+      var result = new GameObject("UiPool").AddComponent<OnScenePool>();
       result.gameObject.SetActive(false);
       return result;
     }
