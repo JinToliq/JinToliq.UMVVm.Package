@@ -26,10 +26,11 @@ namespace JinToliq.Umvvm.View
 
   public abstract class UiView<TType> : DataView, IUiView<TType> where TType : Enum
   {
-    [SerializeField] private TType _type;
+    [SerializeField] private TType _uiName;
+    [SerializeField] private UiType _uiType;
 
-    public abstract UiType UiType { get; }
-    public TType Type => _type;
+    public TType Type => _uiName;
+    public UiType UiType => _uiType;
 
     public override IDataView GetInitialized() => this;
 
@@ -62,10 +63,11 @@ namespace JinToliq.Umvvm.View
     where TType : Enum
     where TContext : Context, new()
   {
-    [SerializeField] private TType _type;
+    [SerializeField] private TType _uiName;
+    [SerializeField] private UiType _uiType;
 
-    public abstract UiType UiType { get; }
-    public TType Type => _type;
+    public TType Type => _uiName;
+    public UiType UiType => _uiType;
 
     public GameObject GetGameObject() => gameObject;
 
