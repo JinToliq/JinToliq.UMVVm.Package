@@ -9,5 +9,7 @@ Assign one of the next values:
  - OpenNewWindow
 
 In UiType filed on view to define if opened Ui element should hide all previous views or only pop above them
-## [1.1.0] 2024-07-10
+## [1.1.1] 2024-07-10
 ### Minor fixes for UI View setup
+## [1.1.2] 2024-07-10
+### Added setting for UI parent transform for BaseUiViewManager

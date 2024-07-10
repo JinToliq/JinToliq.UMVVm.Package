@@ -10,6 +10,7 @@ namespace JinToliq.Umvvm.View
   public abstract class BaseUiViewManager : MonoBehaviour
   {
     [SerializeField] private string _resourcesBasePath = "Prefabs/UI";
+    [SerializeField] private Transform _uiViewsContainer;
 
     private readonly List<IUiView> _pool = new();
     private readonly List<(IUiView View, int Index)> _activeUi = new();
@@ -56,7 +57,7 @@ namespace JinToliq.Umvvm.View
       if (pooledIndex < 0)
       {
         view = GetNewView(state.Type);
-        view.GetTransform().SetParent(transform);
+        view.GetTransform().SetParent(_uiViewsContainer);
       }
       else
       {
