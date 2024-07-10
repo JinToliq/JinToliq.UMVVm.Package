@@ -1,6 +1,6 @@
 {
   "name": "com.jintoliq.umvvm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "displayName": "UMVVm",
   "description": "Fastly organize UI in a Model-View-ViewModel pattern using simple and robust data bindings to contexts and UI manager to open UI Windows or Popups",
   "unity": "2023.2",

@@ -8,8 +8,6 @@ namespace JinToliq.Umvvm.ViewModel
   {
     public event Action<UiState> StateOpened;
     public event Action<UiState> StateClosed;
-    public event Action<UiState> StateShown;
-    public event Action<UiState> StateHidden;
 
     public static Ui Instance { get; } = new();
 
@@ -17,39 +15,27 @@ namespace JinToliq.Umvvm.ViewModel
 
     private Ui() { }
 
-    public void ToggleIfLastState(UiType uiType, Enum type)
+    public void ToggleIfLastState(Enum type)
     {
       if (_states.Count == 0)
       {
-        OpenState(uiType, type);
+        OpenState(type);
         return;
       }
 
       var last = _states[^1];
-      if (last.UiType != uiType || !last.Type.Equals(type))
+      if (!last.Type.Equals(type))
       {
-        OpenState(uiType, type);
+        OpenState(type);
         return;
       }
 
-      CloseState(uiType, type);
+      CloseState(type);
     }
 
-    public void OpenState(UiType uiType, Enum type)
+    public void OpenState(Enum type)
     {
-      var index = 0;
-      if (_states.Count > 0 && uiType is UiType.Window)
-      {
-        foreach (var uiState in _states.Where(uiState => uiState.IsActive))
-        {
-          uiState.IsActive = false;
-          StateHidden?.Invoke(uiState);
-        }
-
-        index = _states[^1].Index + 1;
-      }
-
-      var state = new UiState(uiType, type, index)
+      var state = new UiState(type, _states.Max(s => s.Index + 1))
       {
         IsActive = true
       };
@@ -57,13 +43,13 @@ namespace JinToliq.Umvvm.ViewModel
       StateOpened?.Invoke(state);
     }
 
-    public void CloseState(UiType uiType, Enum type)
+    public void CloseState(Enum type)
     {
       if (_states.Count == 0)
         return;
 
       var last = _states[^1];
-      if (last.UiType == uiType && last.Type.Equals(type))
+      if (last.Type.Equals(type))
       {
         Back();
         return;
@@ -75,7 +61,7 @@ namespace JinToliq.Umvvm.ViewModel
       for (var i = _states.Count - 2; i >= 0; i--)
       {
         var state = _states[i];
-        if (state.UiType != uiType || !state.Type.Equals(type))
+        if (!state.Type.Equals(type))
           continue;
 
         _states.RemoveAt(i);
@@ -91,22 +77,6 @@ namespace JinToliq.Umvvm.ViewModel
       var last = _states[^1];
       _states.RemoveAt(_states.Count - 1);
       StateClosed?.Invoke(last);
-
-      if (_states.Count == 0)
-        return;
-
-      for (var i = _states.Count - 1; i >= 0; i--)
-      {
-        var state = _states[i];
-        if (!state.IsActive)
-        {
-          state.IsActive = true;
-          StateShown?.Invoke(state);
-        }
-
-        if (state.UiType is UiType.Window)
-          break;
-      }
     }
   }
 }

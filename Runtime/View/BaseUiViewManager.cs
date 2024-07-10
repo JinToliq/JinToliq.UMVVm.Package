@@ -16,15 +16,15 @@ namespace JinToliq.Umvvm.View
 
     public bool HasOpenedUi => _activeUi.Count > 0;
 
-    protected abstract IUiView GetNewView(UiType uiType, Enum type);
+    protected abstract IUiView GetNewView(Enum type);
     protected virtual void OnUiOpened(IUiView view) {}
     protected virtual void OnUiClosed(IUiView view) {}
     protected virtual void OnUiShown(IUiView view) {}
     protected virtual void OnUiHidden(IUiView view) {}
 
-    protected IUiView GetFromResources(UiType uiType, Enum type)
+    protected IUiView GetFromResources(Enum type)
     {
-      var path = GetResourcesUiPath(uiType, type);
+      var path = GetResourcesUiPath(type);
       var template = Resources.Load<GameObject>(path);
       if (template == null)
         throw new Exception($"No UI prefab found by path: {Path.Combine("Resources", path)}");
@@ -41,31 +41,33 @@ namespace JinToliq.Umvvm.View
     {
       Ui.Instance.StateOpened += OpenUi;
       Ui.Instance.StateClosed += CloseUi;
-      Ui.Instance.StateShown += ShowUi;
-      Ui.Instance.StateHidden += HideUi;
     }
 
     private void OnDestroy()
     {
       Ui.Instance.StateOpened -= OpenUi;
       Ui.Instance.StateClosed -= CloseUi;
-      Ui.Instance.StateShown -= ShowUi;
-      Ui.Instance.StateHidden -= HideUi;
     }
 
     private void OpenUi(UiState state)
     {
       IUiView view;
-      var pooledIndex = _pool.FindIndex(p => p.UiType == state.UiType && p.BaseType.Equals(state.Type));
+      var pooledIndex = _pool.FindIndex(p => p.BaseType.Equals(state.Type));
       if (pooledIndex < 0)
       {
-        view = GetNewView(state.UiType, state.Type);
+        view = GetNewView(state.Type);
         view.GetTransform().SetParent(transform);
       }
       else
       {
         view = _pool[pooledIndex];
         _pool.RemoveAt(pooledIndex);
+      }
+
+      if (view.UiType is UiType.OpenNewWindow && _activeUi.Count > 0)
+      {
+        foreach (var item in _activeUi)
+          StartCoroutine(DoViewRoutine(item.View, item.View.OnHide(), OnHideComplete));
       }
 
       view.GetGameObject().SetActive(true);
@@ -75,48 +77,27 @@ namespace JinToliq.Umvvm.View
 
     private void CloseUi(UiState state)
     {
-      var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.UiType == state.UiType && p.View.BaseType.Equals(state.Type));
+      var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.BaseType.Equals(state.Type));
       if (index < 0)
         return;
 
       var view = _activeUi[index].View;
       _activeUi.RemoveAt(index);
       _pool.Add(view);
-      StartCoroutine(DoViewRoutine(view, view.OnClose(), Complete));
-      return;
+      StartCoroutine(DoViewRoutine(view, view.OnClose(), OnCloseComplete));
 
-      void Complete(IUiView item)
-      {
-        item.GetGameObject().SetActive(false);
-        OnUiClosed(view);
-      }
-    }
-
-    private void ShowUi(UiState state)
-    {
-      var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.UiType == state.UiType && p.View.BaseType.Equals(state.Type));
-      if (index < 0)
+      if (view.UiType is not UiType.OpenNewWindow)
+        return;
+      if (_activeUi.Count == 0)
         return;
 
-      var view = _activeUi[index].View;
-      view.GetGameObject().SetActive(true);
-      StartCoroutine(DoViewRoutine(view, view.OnShow(), OnUiShown));
-    }
-
-    private void HideUi(UiState state)
-    {
-      var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.UiType == state.UiType && p.View.BaseType.Equals(state.Type));
-      if (index < 0)
-        return;
-
-      var view = _activeUi[index].View;
-      StartCoroutine(DoViewRoutine(view, view.OnHide(), Complete));
-      return;
-
-      void Complete(IUiView item)
+      for (var i = _activeUi.Count - 1; i >= 0; i--)
       {
-        item.GetGameObject().SetActive(false);
-        OnUiHidden(view);
+        var item = _activeUi[i];
+        item.View.GetGameObject().SetActive(true);
+        StartCoroutine(DoViewRoutine(item.View, item.View.OnShow(), OnUiShown));
+        if (item.View.UiType is UiType.OpenNewWindow)
+          break;
       }
     }
 
@@ -128,12 +109,24 @@ namespace JinToliq.Umvvm.View
       onEnd(view);
     }
 
-    private string GetResourcesUiPath(UiType uiType, Enum type)
+    private string GetResourcesUiPath(Enum type)
     {
       if (string.IsNullOrEmpty(_resourcesBasePath))
         throw new Exception("PopupResourcesBasePath should be set");
 
-      return Path.Combine(_resourcesBasePath, uiType.ToString(), type.ToString());
+      return Path.Combine(_resourcesBasePath, type.ToString(), type.ToString());
+    }
+
+    private void OnHideComplete(IUiView view)
+    {
+      view.GetGameObject().SetActive(false);
+      OnUiHidden(view);
+    }
+
+    private void OnCloseComplete(IUiView view)
+    {
+      view.GetGameObject().SetActive(false);
+      OnUiClosed(view);
     }
   }
 }
