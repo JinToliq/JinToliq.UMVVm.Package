@@ -58,6 +58,10 @@ namespace JinToliq.Umvvm.View
       {
         view = GetNewView(state.Type);
         view.GetTransform().SetParent(_uiViewsContainer);
+        var viewTransform = view.GetTransform();
+        viewTransform.SetParent(_uiViewsContainer);
+        viewTransform.localScale = Vector3.one;
+        viewTransform.localPosition = Vector3.zero;
       }
       else
       {

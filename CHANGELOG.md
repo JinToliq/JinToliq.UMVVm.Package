@@ -19,3 +19,5 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ### Fixed sprite selection by SpriteContainerBinding if property value is null
 ## [1.1.4] 2024-07-11
 ### Fixed ui state handling
+## [1.1.4] 2024-07-12
+### Fixed view scale and position on open
