@@ -15,7 +15,7 @@ namespace JinToliq.Umvvm.View.Binding.Specific
 
     protected override void OnChanged(Property property)
     {
-      _target.sprite = _container.Evaluate(property.GetValue().ToString());
+      _target.sprite = _container.Evaluate(property.GetValue()?.ToString());
     }
 
     private void Reset()
