@@ -35,7 +35,7 @@ namespace JinToliq.Umvvm.ViewModel
 
     public void OpenState(Enum type)
     {
-      var state = new UiState(type, _states.Max(s => s.Index + 1))
+      var state = new UiState(type,  _states.Count > 0 ? _states.Max(s => s.Index + 1) : 0)
       {
         IsActive = true
       };

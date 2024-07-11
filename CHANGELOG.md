@@ -13,3 +13,5 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ### Minor fixes for UI View setup
 ## [1.1.2] 2024-07-10
 ### Added setting for UI parent transform for BaseUiViewManager
+## [1.1.3] 2024-07-11
+### Fixed Sequence contains no elements exception when opening first UI view in list
