@@ -8,7 +8,7 @@ namespace JinToliq.Umvvm.View
   public interface IUiView
   {
     UiType UiType { get; }
-    Enum BaseType => UiType;
+    Enum BaseType { get; }
 
     GameObject GetGameObject();
     Transform GetTransform();
@@ -22,6 +22,8 @@ namespace JinToliq.Umvvm.View
   public interface IUiView<out TType> : IUiView where TType : Enum
   {
     TType Type { get; }
+
+    Enum IUiView.BaseType => Type;
   }
 
   public abstract class UiView<TType> : DataView, IUiView<TType> where TType : Enum
