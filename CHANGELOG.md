@@ -17,7 +17,9 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ### Fixed Sequence contains no elements exception when opening first UI view in list
 ## [1.1.4] 2024-07-11
 ### Fixed sprite selection by SpriteContainerBinding if property value is null
-## [1.1.4] 2024-07-11
+## [1.1.5] 2024-07-11
 ### Fixed ui state handling
-## [1.1.4] 2024-07-12
+## [1.1.6] 2024-07-12
 ### Fixed view scale and position on open
+## [1.1.7] 2024-07-12
+### Minor implementation changes

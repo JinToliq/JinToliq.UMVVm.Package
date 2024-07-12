@@ -53,7 +53,7 @@ namespace JinToliq.Umvvm.View
     private void OpenUi(UiState state)
     {
       IUiView view;
-      var pooledIndex = _pool.FindIndex(p => p.BaseType.Equals(state.Type));
+      var pooledIndex = _pool.FindIndex(p => p.BaseName.Equals(state.Type));
       if (pooledIndex < 0)
       {
         view = GetNewView(state.Type);
@@ -82,7 +82,7 @@ namespace JinToliq.Umvvm.View
 
     private void CloseUi(UiState state)
     {
-      var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.BaseType.Equals(state.Type));
+      var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.BaseName.Equals(state.Type));
       if (index < 0)
         return;
 
