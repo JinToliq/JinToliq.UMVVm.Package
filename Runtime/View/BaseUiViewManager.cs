@@ -48,7 +48,7 @@ namespace JinToliq.Umvvm.View
       if (!_resourceSearchPattern.Contains(UiViewTypePlaceholder))
         throw new Exception($"ResourceSearchPattern field should contain '{UiViewTypePlaceholder}' placeholder");
 
-      var path = _resourceSearchPattern.Replace(UiViewTypePlaceholder, type.ToString(), StringComparison.InvariantCulture);
+      var path = _resourceSearchPattern.Replace(UiViewTypePlaceholder, type.ToString(), StringComparison.OrdinalIgnoreCase);
       return Path.Combine(path.Split('\\', '/'));
     }
 

@@ -28,3 +28,5 @@ In UiType filed on view to define if opened Ui element should hide all previous 
  - Replaced ResourceBasePath with more flexible ResourceSearchPattern with default value "Prefabs/UI/{UiViewType}/{UiViewType}" where {UiViewType} will be automatically replaced with string Enum value of UiView
  - Made GetResourcesUiPath method virtual to allow custom path generation
  - Full expanding each UiView RectTransform on every open - now every UiView will fully cover UiViewsContainer every time
+## [1.2.1] 2024-10-18
+### Improvements to ResourceSearchPattern parsing
