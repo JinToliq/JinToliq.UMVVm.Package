@@ -11,7 +11,7 @@ namespace JinToliq.Umvvm.View
     Enum BaseName { get; }
 
     GameObject GetGameObject();
-    Transform GetTransform();
+    RectTransform GetTransform();
 
     IEnumerator OnOpen();
     IEnumerator OnClose();
@@ -37,7 +37,7 @@ namespace JinToliq.Umvvm.View
 
     public GameObject GetGameObject() => gameObject;
 
-    public Transform GetTransform() => transform;
+    public RectTransform GetTransform() => GetComponent<RectTransform>();
 
     public IEnumerator OnOpen()
     {
@@ -71,7 +71,7 @@ namespace JinToliq.Umvvm.View
 
     public GameObject GetGameObject() => gameObject;
 
-    public Transform GetTransform() => transform;
+    public RectTransform GetTransform() => GetComponent<RectTransform>();
 
     public IEnumerator OnOpen()
     {

@@ -23,3 +23,8 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ### Fixed view scale and position on open
 ## [1.1.7] 2024-07-12
 ### Minor implementation changes
+## [1.2.0] 2024-10-18
+### Changes to BaseUiViewManager
+ - Replaced ResourceBasePath with more flexible ResourceSearchPattern with default value "Prefabs/UI/{UiViewType}/{UiViewType}" where {UiViewType} will be automatically replaced with string Enum value of UiView
+ - Made GetResourcesUiPath method virtual to allow custom path generation
+ - Full expanding each UiView RectTransform on every open - now every UiView will fully cover UiViewsContainer every time

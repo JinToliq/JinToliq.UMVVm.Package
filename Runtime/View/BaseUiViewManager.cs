@@ -9,7 +9,9 @@ namespace JinToliq.Umvvm.View
 {
   public abstract class BaseUiViewManager : MonoBehaviour
   {
-    [SerializeField] private string _resourcesBasePath = "Prefabs/UI";
+    private const string UiViewTypePlaceholder = "{UiViewType}";
+
+    [SerializeField] private string _resourceSearchPattern = Path.Combine("Prefabs", "UI", UiViewTypePlaceholder, UiViewTypePlaceholder);
     [SerializeField] private Transform _uiViewsContainer;
 
     private readonly List<IUiView> _pool = new();
@@ -38,6 +40,18 @@ namespace JinToliq.Umvvm.View
       return view;
     }
 
+    protected virtual string GetResourcesUiPath(Enum type)
+    {
+      if (string.IsNullOrEmpty(_resourceSearchPattern))
+        throw new Exception("ResourceSearchPattern field should be set");
+
+      if (!_resourceSearchPattern.Contains(UiViewTypePlaceholder))
+        throw new Exception($"ResourceSearchPattern field should contain '{UiViewTypePlaceholder}' placeholder");
+
+      var path = _resourceSearchPattern.Replace(UiViewTypePlaceholder, type.ToString(), StringComparison.InvariantCulture);
+      return Path.Combine(path.Split('\\', '/'));
+    }
+
     private void Awake()
     {
       Ui.Instance.StateOpened += OpenUi;
@@ -53,19 +67,18 @@ namespace JinToliq.Umvvm.View
     private void OpenUi(UiState state)
     {
       IUiView view;
+      RectTransform viewTransform;
       var pooledIndex = _pool.FindIndex(p => p.BaseName.Equals(state.Type));
       if (pooledIndex < 0)
       {
         view = GetNewView(state.Type);
-        view.GetTransform().SetParent(_uiViewsContainer);
-        var viewTransform = view.GetTransform();
+        viewTransform = view.GetTransform();
         viewTransform.SetParent(_uiViewsContainer);
-        viewTransform.localScale = Vector3.one;
-        viewTransform.localPosition = Vector3.zero;
       }
       else
       {
         view = _pool[pooledIndex];
+        viewTransform = view.GetTransform();
         _pool.RemoveAt(pooledIndex);
       }
 
@@ -75,9 +88,19 @@ namespace JinToliq.Umvvm.View
           StartCoroutine(DoViewRoutine(item.View, item.View.OnHide(), OnHideComplete));
       }
 
+      FullExpandRectTransform(viewTransform);
       view.GetGameObject().SetActive(true);
       _activeUi.Add(new(view, state.Index));
       StartCoroutine(DoViewRoutine(view, view.OnOpen(), OnUiOpened));
+      return;
+
+      void FullExpandRectTransform(RectTransform rectTransform)
+      {
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.sizeDelta = Vector2.zero;
+        rectTransform.anchoredPosition = Vector2.zero;
+      }
     }
 
     private void CloseUi(UiState state)
@@ -112,14 +135,6 @@ namespace JinToliq.Umvvm.View
         yield return routine.Current;
 
       onEnd(view);
-    }
-
-    private string GetResourcesUiPath(Enum type)
-    {
-      if (string.IsNullOrEmpty(_resourcesBasePath))
-        throw new Exception("PopupResourcesBasePath should be set");
-
-      return Path.Combine(_resourcesBasePath, type.ToString(), type.ToString());
     }
 
     private void OnHideComplete(IUiView view)
