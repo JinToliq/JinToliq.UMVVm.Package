@@ -15,6 +15,8 @@ namespace JinToliq.Umvvm.ViewModel
 
     private Ui() { }
 
+    public bool IsLastOpenedState(Enum type) => _states.Count > 0 && _states[^1].Type.Equals(type);
+
     public void ToggleIfLastState(Enum type)
     {
       if (_states.Count == 0)
@@ -33,12 +35,9 @@ namespace JinToliq.Umvvm.ViewModel
       CloseState(type);
     }
 
-    public void OpenState(Enum type)
+    public void OpenState(Enum type, object openWithState = null)
     {
-      var state = new UiState(type,  _states.Count > 0 ? _states.Max(s => s.Index + 1) : 0)
-      {
-        IsActive = true
-      };
+      var state = new UiState(type, _states.Count > 0 ? _states.Max(s => s.Index + 1) : 0, openWithState);
       _states.Add(state);
       StateOpened?.Invoke(state);
     }

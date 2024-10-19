@@ -12,12 +12,13 @@ namespace JinToliq.Umvvm.ViewModel
   {
     public readonly Enum Type;
     public readonly int Index;
-    public bool IsActive;
+    public readonly object OpenWithState;
 
-    public UiState(Enum type, int index)
+    public UiState(Enum type, int index, object openWithState = null)
     {
       Type = type;
       Index = index;
+      OpenWithState = openWithState;
     }
   }
 }

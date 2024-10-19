@@ -19,6 +19,10 @@ namespace JinToliq.Umvvm.View
 
     public bool HasOpenedUi => _activeUi.Count > 0;
 
+    public bool IsLastOpenedState(Enum type) => _activeUi.Count > 0 && _activeUi[^1].View.BaseName.Equals(type);
+
+    public IUiView GetLastOpenedUi() => _activeUi.Count > 0 ? _activeUi[^1].View : null;
+
     protected abstract IUiView GetNewView(Enum type);
     protected virtual void OnUiOpened(IUiView view) {}
     protected virtual void OnUiClosed(IUiView view) {}
@@ -90,6 +94,10 @@ namespace JinToliq.Umvvm.View
 
       FullExpandRectTransform(viewTransform);
       view.GetGameObject().SetActive(true);
+
+      if (state.OpenWithState is not null)
+        (view as DataView)?.TrySetState(state.OpenWithState);
+
       _activeUi.Add(new(view, state.Index));
       StartCoroutine(DoViewRoutine(view, view.OnOpen(), OnUiOpened));
       return;

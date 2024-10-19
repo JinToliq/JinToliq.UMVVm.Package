@@ -30,3 +30,6 @@ In UiType filed on view to define if opened Ui element should hide all previous 
  - Full expanding each UiView RectTransform on every open - now every UiView will fully cover UiViewsContainer every time
 ## [1.2.1] 2024-10-18
 ### Improvements to ResourceSearchPattern parsing
+## [1.2.2] 2024-10-19
+### Now it is possible to open UIView with specific Context State
+### Added method to validate last opened view

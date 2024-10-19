@@ -4,7 +4,6 @@ namespace JinToliq.Umvvm.View
 {
   public interface IDataView
   {
-
     IDataView GetInitialized();
     Property GetProperty(string property);
     TProperty GetProperty<TProperty>(string property) where TProperty : Property;

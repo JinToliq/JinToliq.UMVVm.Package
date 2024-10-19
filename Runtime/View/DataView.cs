@@ -39,6 +39,15 @@ namespace JinToliq.Umvvm.View
         contextWithState.SetStateObject(null);
     }
 
+    public void TrySetState(object state)
+    {
+      if (BaseContext is null)
+        GetInitialized();
+
+      if (BaseContext is IContextWithState contextWithState)
+        contextWithState.SetStateObject(state);
+    }
+
     public void SetState<TState>(TState state)
     {
       if (BaseContext is null)
