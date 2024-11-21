@@ -33,3 +33,5 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ## [1.2.2] 2024-10-19
 ### Now it is possible to open UIView with specific Context State
 ### Added method to validate last opened view
+## [1.3.0] 2024-11-21
+### Added MasterPathBinding. Now it is possible to specify same parent context for al child bindings not to write context name at the beginning several times
