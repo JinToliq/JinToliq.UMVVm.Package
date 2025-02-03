@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace JinToliq.Umvvm.View
 {
-  public abstract class BaseUiViewManager : MonoBehaviour
+  public abstract class BaseViewManager : MonoBehaviour
   {
     private const string UiViewTypePlaceholder = "{UiViewType}";
 
@@ -34,12 +34,12 @@ namespace JinToliq.Umvvm.View
       var path = GetResourcesUiPath(type);
       var template = Resources.Load<GameObject>(path);
       if (template == null)
-        throw new Exception($"No UI prefab found by path: {Path.Combine("Resources", path)}");
+        throw new($"No UI prefab found by path: {Path.Combine("Resources", path)}");
 
       var instance = Instantiate(template);
       var view = instance.GetComponent<IUiView>();
       if (view is null)
-        throw new Exception($"UI prefab by path {Path.Combine("Resources", path)} does not contain component implementing {nameof(IUiView)} interface");
+        throw new($"UI prefab by path {Path.Combine("Resources", path)} does not contain component implementing {nameof(IUiView)} interface");
 
       return view;
     }
@@ -47,28 +47,16 @@ namespace JinToliq.Umvvm.View
     protected virtual string GetResourcesUiPath(Enum type)
     {
       if (string.IsNullOrEmpty(_resourceSearchPattern))
-        throw new Exception("ResourceSearchPattern field should be set");
+        throw new("ResourceSearchPattern field should be set");
 
       if (!_resourceSearchPattern.Contains(UiViewTypePlaceholder))
-        throw new Exception($"ResourceSearchPattern field should contain '{UiViewTypePlaceholder}' placeholder");
+        throw new($"ResourceSearchPattern field should contain '{UiViewTypePlaceholder}' placeholder");
 
       var path = _resourceSearchPattern.Replace(UiViewTypePlaceholder, type.ToString(), StringComparison.OrdinalIgnoreCase);
       return Path.Combine(path.Split('\\', '/'));
     }
 
-    private void Awake()
-    {
-      Ui.Instance.StateOpened += OpenUi;
-      Ui.Instance.StateClosed += CloseUi;
-    }
-
-    private void OnDestroy()
-    {
-      Ui.Instance.StateOpened -= OpenUi;
-      Ui.Instance.StateClosed -= CloseUi;
-    }
-
-    private void OpenUi(UiState state)
+    public void OpenUi(UiState state)
     {
       IUiView view;
       RectTransform viewTransform;
@@ -108,10 +96,11 @@ namespace JinToliq.Umvvm.View
         rectTransform.anchorMax = Vector2.one;
         rectTransform.sizeDelta = Vector2.zero;
         rectTransform.anchoredPosition = Vector2.zero;
+        rectTransform.localScale = Vector3.one;
       }
     }
 
-    private void CloseUi(UiState state)
+    public void CloseUi(UiState state)
     {
       var index = _activeUi.FindIndex(p => p.Index == state.Index && p.View.BaseName.Equals(state.Type));
       if (index < 0)

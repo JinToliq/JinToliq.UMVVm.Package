@@ -35,3 +35,5 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ### Added method to validate last opened view
 ## [1.3.0] 2024-11-21
 ### Added MasterPathBinding. Now it is possible to specify same parent context for al child bindings not to write context name at the beginning several times
+## [2.0.0] 2025-02-03
+### Separated BaseUiViewManager and BaseViewModel. Added SelfContainedViewManager and SelfContainedViewModel to communicate through events

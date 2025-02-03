@@ -1,22 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Scripting;
 
 namespace JinToliq.Umvvm.ViewModel
 {
-  public class Ui
+  [Preserve]
+  public abstract class BaseViewModel
   {
-    public event Action<UiState> StateOpened;
-    public event Action<UiState> StateClosed;
-
-    public static Ui Instance { get; } = new();
-
     private List<UiState> _states = new();
 
-    private Ui() { }
-
+    [Preserve]
     public bool IsLastOpenedState(Enum type) => _states.Count > 0 && _states[^1].Type.Equals(type);
 
+    [Preserve]
     public void ToggleIfLastState(Enum type)
     {
       if (_states.Count == 0)
@@ -35,13 +32,15 @@ namespace JinToliq.Umvvm.ViewModel
       CloseState(type);
     }
 
+    [Preserve]
     public void OpenState(Enum type, object openWithState = null)
     {
       var state = new UiState(type, _states.Count > 0 ? _states.Max(s => s.Index + 1) : 0, openWithState);
       _states.Add(state);
-      StateOpened?.Invoke(state);
+      OnStateOpened(state);
     }
 
+    [Preserve]
     public void CloseState(Enum type)
     {
       if (_states.Count == 0)
@@ -64,10 +63,11 @@ namespace JinToliq.Umvvm.ViewModel
           continue;
 
         _states.RemoveAt(i);
-        StateClosed?.Invoke(state);
+        OnStateClosed(state);
       }
     }
 
+    [Preserve]
     public void Back()
     {
       if (_states.Count == 0)
@@ -75,7 +75,11 @@ namespace JinToliq.Umvvm.ViewModel
 
       var last = _states[^1];
       _states.RemoveAt(_states.Count - 1);
-      StateClosed?.Invoke(last);
+      OnStateClosed(last);
     }
+
+    protected abstract void OnStateOpened(UiState state);
+
+    protected abstract void OnStateClosed(UiState state);
   }
 }
