@@ -37,3 +37,5 @@ In UiType filed on view to define if opened Ui element should hide all previous 
 ### Added MasterPathBinding. Now it is possible to specify same parent context for al child bindings not to write context name at the beginning several times
 ## [2.0.0] 2025-02-03
 ### Separated BaseUiViewManager and BaseViewModel. Added SelfContainedViewManager and SelfContainedViewModel to communicate through events
+## [2.0.1] 2025-02-11
+### Fixes for MasterPathBinding

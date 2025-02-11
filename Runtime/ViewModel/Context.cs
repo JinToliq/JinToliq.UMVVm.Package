@@ -8,10 +8,10 @@ namespace JinToliq.Umvvm.ViewModel
   public interface IContext
   {
     void SetParent(IContext parent);
-    Property GetProperty(string name);
-    TProperty GetProperty<TProperty>(string name) where TProperty : Property;
-    Command GetCommand(string name);
-    TCommand GetCommand<TCommand>(string name) where TCommand : ICommand;
+    Property GetProperty(ReadOnlySpan<char> name);
+    TProperty GetProperty<TProperty>(ReadOnlySpan<char> name) where TProperty : Property;
+    Command GetCommand(ReadOnlySpan<char> name);
+    TCommand GetCommand<TCommand>(ReadOnlySpan<char> name) where TCommand : ICommand;
     void Enable();
     void Disable();
   }
@@ -64,46 +64,43 @@ namespace JinToliq.Umvvm.ViewModel
 
     public void SetParent(IContext parent) => _parent = parent;
 
-    public Property GetProperty(string name)
+    public Property GetProperty(ReadOnlySpan<char> name)
     {
       AssertNullOrEmpty(name);
 
       if (name[0] == ParentContextMarker)
       {
         if (_parent is null)
-          throw new ContextHasNoParent(name);
+          throw new ContextHasNoParent(new(name));
 
         return _parent.GetProperty(name[1..]);
       }
 
       var childMarkerIndex = name.IndexOf(ChildContextMarker);
       if (childMarkerIndex == 0)
-        throw new InvalidPropertyName(name, GetType());
+        throw new InvalidPropertyName(new(name), GetType());
 
       if (childMarkerIndex > 0)
       {
         var contextName = name[..childMarkerIndex];
-        AssertRegistered(_contexts, contextName);
-        return _contexts[contextName].GetProperty(name[(childMarkerIndex + 1)..]);
+        var contextNameStr = AssertRegistered(_contexts, contextName);
+        return _contexts[contextNameStr].GetProperty(name[(childMarkerIndex + 1)..]);
       }
 
-      AssertRegistered(_properties, name);
-      return _properties[name];
+      var nameStr = AssertRegistered(_properties, name);
+      return _properties[nameStr];
     }
 
-    public TProperty GetProperty<TProperty>(string name) where TProperty : Property
+    public TProperty GetProperty<TProperty>(ReadOnlySpan<char> name) where TProperty : Property => GetProperty(name).As<TProperty>();
+
+    public Command GetCommand(ReadOnlySpan<char> name) => GetCommandInternal(name).As<Command>();
+
+    public TCommand GetCommand<TCommand>(ReadOnlySpan<char> name) where TCommand : ICommand => GetCommandInternal(name).As<TCommand>();
+
+    public IContext GetChildContext(ReadOnlySpan<char> name)
     {
-      return GetProperty(name).As<TProperty>();
-    }
-
-    public Command GetCommand(string name) => GetCommandInternal(name).As<Command>();
-
-    public TCommand GetCommand<TCommand>(string name) where TCommand : ICommand => GetCommandInternal(name).As<TCommand>();
-
-    public IContext GetChildContext(string name)
-    {
-      AssertRegistered(_contexts, name);
-      return _contexts[name];
+      var nameStr = AssertRegistered(_contexts, name);
+      return _contexts[nameStr];
     }
 
     public void Enable()
@@ -165,45 +162,49 @@ namespace JinToliq.Umvvm.ViewModel
       context.SetParent(this);
     }
 
-    private ICommand GetCommandInternal(string name)
+    private ICommand GetCommandInternal(ReadOnlySpan<char> name)
     {
       AssertNullOrEmpty(name);
 
       if (name[0] == ParentContextMarker)
       {
         if (_parent is null)
-          throw new ContextHasNoParent(name);
+          throw new ContextHasNoParent(new(name));
 
         return _parent.GetCommand(name[1..]);
       }
 
       var childMarkerIndex = name.IndexOf(ChildContextMarker);
       if (childMarkerIndex == 0)
-        throw new InvalidPropertyName(name, GetType());
+        throw new InvalidPropertyName(new(name), GetType());
 
       if (childMarkerIndex > 0)
       {
         var contextName = name[..childMarkerIndex];
-        AssertRegistered(_contexts, contextName);
-        return _contexts[contextName].GetCommand(name[(childMarkerIndex + 1)..]);
+        var contextNameStr = AssertRegistered(_contexts, contextName);
+        return _contexts[contextNameStr].GetCommand(name[(childMarkerIndex + 1)..]);
       }
 
-      AssertRegistered(_commands, name);
-      return _commands[name];
+      var nameStr = AssertRegistered(_commands, name);
+      return _commands[nameStr];
     }
 
-    private void AssertNullOrEmpty(string name)
+    private void AssertNullOrEmpty(ReadOnlySpan<char> name)
     {
-      if (string.IsNullOrEmpty(name))
-        throw new InvalidPropertyName(name, GetType());
+      if (name.IsEmpty)
+        throw new InvalidPropertyName("Name is empty", GetType());
     }
 
-    private void AssertRegistered(IDictionary dictionary, string name)
+    private string AssertRegistered(IDictionary dictionary, ReadOnlySpan<char> name)
     {
       if (dictionary is null)
-        throw new InvalidPropertyName(name, GetType());
-      if (!dictionary.Contains(name))
-        throw new InvalidPropertyName(name, GetType());
+        throw new InvalidPropertyName(new(name), GetType());
+
+      var str = new string(name);
+      if (!dictionary.Contains(str))
+        throw new InvalidPropertyName(str, GetType());
+
+      return str;
     }
   }
 }

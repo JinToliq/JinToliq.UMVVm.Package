@@ -13,13 +13,13 @@ namespace JinToliq.Umvvm.View.Binding
     protected bool IsBound { get; private set; }
     protected string MasterPath { get; private set; }
 
-    public Property GetProperty(string property) => _view.GetProperty(property);
+    public Property GetProperty(string property) => _view.GetProperty(string.IsNullOrEmpty(MasterPath) ? property : $"{MasterPath}.{property}");
 
-    public TProperty GetProperty<TProperty>(string property) where TProperty : Property => _view.GetProperty<TProperty>(property);
+    public TProperty GetProperty<TProperty>(string property) where TProperty : Property => _view.GetProperty<TProperty>(string.IsNullOrEmpty(MasterPath) ? property : $"{MasterPath}.{property}");
 
-    public Command GetCommand(string property) => _view.GetCommand(property);
+    public Command GetCommand(string property) => _view.GetCommand(string.IsNullOrEmpty(MasterPath) ? property : $"{MasterPath}.{property}");
 
-    public TCommand GetCommand<TCommand>(string property) where TCommand : ICommand => _view.GetCommand<TCommand>(property);
+    public TCommand GetCommand<TCommand>(string property) where TCommand : ICommand => _view.GetCommand<TCommand>(string.IsNullOrEmpty(MasterPath) ? property : $"{MasterPath}.{property}");
 
     protected virtual void Bind() {}
 
